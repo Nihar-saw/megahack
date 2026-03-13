@@ -13,7 +13,6 @@ import {
   MessageCircle,
   Briefcase
 } from 'lucide-react';
-import { title } from 'framer-motion/client';
 
 const roles = [
   {

@@ -69,6 +69,12 @@ export const DashboardPage = () => {
     ));
   };
 
+  const handleRestore = (id: string) => {
+    setSims(prev => prev.map(sim => 
+      sim.courseId === id ? { ...sim, isArchived: false, status: 'In Progress' as const } : sim
+    ));
+  };
+
   const filteredSims = sims.filter(sim => sim.isArchived === showArchived);
 
   return (
@@ -133,6 +139,7 @@ export const DashboardPage = () => {
               key={index} 
               {...sim} 
               onArchive={handleArchive}
+              onRestore={handleRestore}
             />
           ))}
           

@@ -49,7 +49,7 @@ export const LandingPage = () => {
                   Assess My Skills <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
-              <Link to="/dashboard">
+              <Link to="/">
                 <Button size="lg" variant="outline" className="px-12 py-7 rounded-2xl border-2 hover:bg-slate-50 text-lg font-bold transition-all hover:scale-105 active:scale-95">
                   Explore Market Value
                 </Button>

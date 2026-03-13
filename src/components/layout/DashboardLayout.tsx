@@ -1,5 +1,6 @@
+import React from 'react';
 import { Sidebar } from './Sidebar';
-import { Bell, Search } from 'lucide-react';
+import { Bell, Search, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { ProfileSidebar } from './ProfileSidebar';
 
@@ -44,6 +45,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
   };
 
   const activeNotifications = notifications.filter(n => n.active);
+  const dismissNotification = (id: number) => setNotifications(prev => prev.map(n => n.id === id ? { ...n, active: false } : n));
 
   return (
     <div className="min-h-screen bg-[#f8fafc] flex">
@@ -69,12 +71,23 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
                 <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
               )}
               {/* Notification Tooltip */}
-              <div className="absolute top-full right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-100 p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+              <div className="absolute top-full right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-100 p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
                 <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Recent Alerts</h4>
+                {activeNotifications.length === 0 && (
+                  <p className="text-xs text-slate-400 font-bold text-center py-2">No new alerts</p>
+                )}
                 {activeNotifications.map(n => (
-                  <div key={n.id} className="p-3 rounded-xl bg-red-50 border border-red-100 mb-2">
-                    <div className="text-sm font-black text-red-600">{n.title}</div>
-                    <div className="text-[11px] font-medium text-red-500 leading-tight">{n.message}</div>
+                  <div key={n.id} className="flex items-start gap-2 p-3 rounded-xl bg-red-50 border border-red-100 mb-2">
+                    <div className="flex-1">
+                      <div className="text-sm font-black text-red-600">{n.title}</div>
+                      <div className="text-[11px] font-medium text-red-500 leading-tight">{n.message}</div>
+                    </div>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); dismissNotification(n.id); }}
+                      className="text-red-300 hover:text-red-600 transition-colors mt-0.5 shrink-0"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 ))}
               </div>
