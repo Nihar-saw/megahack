@@ -19,7 +19,7 @@ const simulations = [
     timeLeft: '12h',
     masteryLevel: 65,
     image: '/src/assets/simulation_se_ii.png',
-    avatar: '/src/assets/react.svg'
+    avatar: '/src/assets/avatar_pankaj.png'
   },
   {
     title: 'Analysis of Algorithms',
@@ -28,7 +28,7 @@ const simulations = [
     instructor: 'Dr. Nilesh Deotale',
     masteryLevel: 100,
     image: '/src/assets/simulation_algorithms.png',
-    avatar: '/src/assets/react.svg'
+    avatar: '/src/assets/avatar_nilesh.png'
   },
   {
     title: 'MDM & IoT Systems',
@@ -38,7 +38,7 @@ const simulations = [
     timeLeft: '12h',
     masteryLevel: 42,
     image: '/src/assets/simulation_iot.png',
-    avatar: '/src/assets/react.svg'
+    avatar: '/src/assets/avatar_hiral.png'
   }
 ];
 

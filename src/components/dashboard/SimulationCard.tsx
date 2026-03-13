@@ -44,11 +44,6 @@ export const SimulationCard = ({
         <button className="absolute top-8 right-8 w-10 h-10 rounded-full bg-black/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/40 transition-colors">
           <MoreVertical className="w-5 h-5" />
         </button>
-        <div className="absolute -bottom-2 -right-2 p-4">
-           <div className="w-14 h-14 rounded-full border-4 border-white overflow-hidden shadow-lg shadow-indigo-200">
-             <img src={avatar} alt={instructor} className="w-full h-full object-cover" />
-           </div>
-        </div>
       </div>
 
       <div className="p-8 flex-1 flex flex-col">
