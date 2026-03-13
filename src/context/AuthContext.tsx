@@ -12,6 +12,7 @@ export interface AuthUser {
   profileImage: string;
   assessmentProgress: number;
   currentCourseId: string;
+  completedDays: Record<string, number>;
   createdAt: string;
 }
 

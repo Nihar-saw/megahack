@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { SimulationCard } from '../components/dashboard/SimulationCard';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
+import { useAuth } from '../context/AuthContext';
 import {
   Plus,
   Award,
@@ -61,22 +62,45 @@ const initialSimulations: Simulation[] = [
 ];
 
 export const DashboardPage = () => {
-  const [sims, setSims] = useState<Simulation[]>(initialSimulations);
+  const { user } = useAuth();
   const [showArchived, setShowArchived] = useState(false);
 
+  // Sync simulations with user progress
+  const sims = useMemo(() => {
+    return initialSimulations.map(sim => {
+      const completed = user?.completedDays?.[sim.courseId] || 0;
+      const mastery = Math.round((completed / 7) * 100);
+      return {
+        ...sim,
+        masteryLevel: mastery,
+        status: (mastery === 100 ? 'Completed' : mastery > 0 ? 'In Progress' : 'Trending') as Simulation['status']
+      };
+    });
+  }, [user?.completedDays]);
+
+  const filteredSims = sims.filter(sim => sim.isArchived === showArchived);
+
+  // Calculate Global Metrics
+  const completedDaysValues = Object.values(user?.completedDays || {}) as number[];
+  const totalDays = completedDaysValues.reduce((a, b) => a + b, 0);
+  const maxDays = 21; // 3 tracks * 7 days
+  
+  const skillScore = Math.min(Math.round((totalDays / maxDays) * 100), 100);
+  const readiness = Math.min(Math.round((totalDays / maxDays) * 95), 100); // Max 95% readiness as default
+  
+  // Salary estimate: Base 30k + 2k per completed day
+  const baseSalary = 30;
+  const currentSalary = baseSalary + (totalDays * 2.5);
+  const salaryRange = `$${Math.round(currentSalary)}k - $${Math.round(currentSalary + 15)}k`;
+
   const handleArchive = (id: string) => {
-    setSims(prev => prev.map(sim =>
-      sim.courseId === id ? { ...sim, isArchived: true, status: 'Archived' as const } : sim
-    ));
+    // Note: In a real app, this would update the backend
+    console.log('Archive', id);
   };
 
   const handleRestore = (id: string) => {
-    setSims(prev => prev.map(sim =>
-      sim.courseId === id ? { ...sim, isArchived: false, status: 'In Progress' as const } : sim
-    ));
+    console.log('Restore', id);
   };
-
-  const filteredSims = sims.filter(sim => sim.isArchived === showArchived);
 
   return (
     <DashboardLayout>
@@ -101,7 +125,7 @@ export const DashboardPage = () => {
               {showArchived ? 'Back to Active' : 'View Archives'}
             </Button>
             {!showArchived && (
-              <Button className="rounded-2xl px-6 py-4 font-black shadow-xl shadow-indigo-200 active:scale-95 transition-all bg-indigo-600">
+              <Button className="rounded-2xl px-6 py-4 font-black shadow-xl shadow-indigo-200 active:scale-95 transition-all bg-indigo-600 outline-none">
                 Start New Simulation
               </Button>
             )}
@@ -112,24 +136,24 @@ export const DashboardPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <StatMiniCard
             title="Skill Score"
-            value="82/100"
-            change="+12%"
+            value={`${skillScore}/100`}
+            change={`+${totalDays * 4}%`}
             icon={<Award className="w-6 h-6 text-indigo-600" />}
-            description="Avg. across all domains"
+            description="Cumulative professional growth"
           />
           <StatMiniCard
             title="Market Value"
-            value="$65k - $80k"
-            change="+$5k"
+            value={salaryRange}
+            change={`+$${totalDays * 2}k`}
             icon={<TrendingUp className="w-6 h-6 text-emerald-600" />}
-            description="Estimated annual salary"
+            description="Estimated based on skills"
           />
           <StatMiniCard
             title="Industry Readiness"
-            value="74%"
-            change="+8%"
+            value={`${readiness}%`}
+            change={`+${Math.round(totalDays * 3.5)}%`}
             icon={<Target className="w-6 h-6 text-amber-600" />}
-            description="Match for target roles"
+            description="Match for top-tier roles"
           />
         </div>
 

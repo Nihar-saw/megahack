@@ -253,8 +253,23 @@ export const AssessmentPage = () => {
       setShowToast(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       // Persist progress
-      await updateProfile({ assessmentProgress: nextDay, currentCourseId: courseId });
+      const newCompletedDays = { 
+        ...(user?.completedDays || {}), 
+        [courseId]: Math.max((user?.completedDays?.[courseId] || 0), currentDay) 
+      };
+      await updateProfile({ 
+        assessmentProgress: nextDay, 
+        currentCourseId: courseId,
+        completedDays: newCompletedDays
+      });
     } else {
+      const newCompletedDays = { 
+        ...(user?.completedDays || {}), 
+        [courseId]: 7 
+      };
+      await updateProfile({ 
+        completedDays: newCompletedDays
+      });
       setIsSuccessModalOpen(true);
     }
   };
@@ -264,7 +279,8 @@ export const AssessmentPage = () => {
       const prevDay = currentDay - 1;
       setCurrentDay(prevDay);
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      // Persist progress
+      // We don't necessarily update completedDays on back, 
+      // but we update the current position
       await updateProfile({ assessmentProgress: prevDay, currentCourseId: courseId });
     }
   };
