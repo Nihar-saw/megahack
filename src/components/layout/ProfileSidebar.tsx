@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, 
@@ -37,6 +38,7 @@ export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
   onUpdateImage
 }) => {
   const navigate = useNavigate();
+  const { logout, updateProfile } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isEditingName, setIsEditingName] = useState(false);
   const [currentName, setCurrentName] = useState(() => {
@@ -54,14 +56,14 @@ export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
     }
   };
 
-  const handleSaveName = () => {
+  const handleSaveName = async () => {
     localStorage.setItem('user-profile-name', currentName);
+    await updateProfile({ name: currentName });
     setIsEditingName(false);
-    // In a real app, you'd trigger a global state update or refresh here
   };
 
   const handleSignOut = () => {
-    // Clear session or anything needed
+    logout();
     navigate('/');
   };
 

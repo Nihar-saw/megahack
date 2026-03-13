@@ -3,17 +3,18 @@ import { Sidebar } from './Sidebar';
 import { Bell, Search, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { ProfileSidebar } from './ProfileSidebar';
+import { useAuth } from '../../context/AuthContext';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
 export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
+  const { user, updateProfile } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(() => {
     return localStorage.getItem('sidebar-collapsed') === 'true';
   });
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [userImage, setUserImage] = useState('/src/assets/react.svg');
   const [notifications, setNotifications] = useState([
     { id: 1, title: 'Assessment Overdue', message: 'Software Engineering II submission is late!', type: 'warning', active: true }
   ]);
@@ -22,30 +23,25 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
     localStorage.setItem('sidebar-collapsed', String(isCollapsed));
   }, [isCollapsed]);
 
-  // Load image from localStorage on mount
-  useEffect(() => {
-    const savedImage = localStorage.getItem('user-profile-image');
-    if (savedImage) {
-      setUserImage(savedImage);
-    }
-  }, []);
-
-  const handleUpdateImage = (newImage: string) => {
-    setUserImage(newImage);
+  const handleUpdateImage = async (newImage: string) => {
+    // Save to DB via auth context
+    await updateProfile({ profileImage: newImage });
+    // Also cache locally for instant display
     localStorage.setItem('user-profile-image', newImage);
-  };
-
-  const user = {
-    name: 'Nihar Saw', // This would come from sign-up data
-    role: 'Full-stack Dev',
-    email: 'nihar.saw@jobsim.ai',
-    location: 'Mumbai, India',
-    joined: 'Jan 2026',
-    image: userImage
   };
 
   const activeNotifications = notifications.filter(n => n.active);
   const dismissNotification = (id: number) => setNotifications(prev => prev.map(n => n.id === id ? { ...n, active: false } : n));
+
+  // Derive display fields from real user (with sensible fallbacks)
+  const displayUser = {
+    name: user?.name || 'Guest',
+    role: user?.role || 'Student',
+    email: user?.email || '',
+    location: user?.location || 'India',
+    joined: user?.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Recently',
+    image: user?.profileImage || localStorage.getItem('user-profile-image') || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user?.name || 'User') + '&background=6366f1&color=fff&size=128',
+  };
 
   return (
     <div className="min-h-screen bg-[#f8fafc] flex">
@@ -56,21 +52,21 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
           <div className="flex-1 max-w-xl">
             <div className="relative group">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-indigo-600 transition-colors" />
-              <input 
-                type="text" 
-                placeholder="Search resources, simulations..." 
+              <input
+                type="text"
+                placeholder="Search resources, simulations..."
                 className="w-full bg-slate-50 border-none rounded-2xl py-3 pl-12 pr-4 focus:ring-2 focus:ring-indigo-500/10 transition-all text-sm"
               />
             </div>
           </div>
 
           <div className="flex items-center gap-6">
+            {/* Notification Bell */}
             <button className="relative p-2 rounded-xl text-slate-400 hover:bg-slate-50 transition-all group">
               <Bell className={`w-6 h-6 ${activeNotifications.length > 0 ? 'text-indigo-600 animate-pulse' : ''}`} />
               {activeNotifications.length > 0 && (
                 <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
               )}
-              {/* Notification Tooltip */}
               <div className="absolute top-full right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-100 p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
                 <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Recent Alerts</h4>
                 {activeNotifications.length === 0 && (
@@ -92,16 +88,18 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
                 ))}
               </div>
             </button>
-            <div 
+
+            {/* Profile */}
+            <div
               onClick={() => setIsProfileOpen(true)}
               className="flex items-center gap-4 pl-6 border-l border-slate-100 cursor-pointer group active:scale-95 transition-all"
             >
               <div className="text-right">
-                <div className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{user.name}</div>
-                <div className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider">{user.role}</div>
+                <div className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{displayUser.name}</div>
+                <div className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider">{displayUser.role}</div>
               </div>
               <div className="w-12 h-12 rounded-2xl bg-indigo-50 border-2 border-indigo-100 p-0.5 overflow-hidden shadow-sm group-hover:shadow-indigo-100 group-hover:border-indigo-200 transition-all">
-                <img src={user.image} alt="Profile" className="w-full h-full object-cover rounded-[14px]" />
+                <img src={displayUser.image} alt="Profile" className="w-full h-full object-cover rounded-[14px]" />
               </div>
             </div>
           </div>
@@ -115,10 +113,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
         </main>
       </div>
 
-      <ProfileSidebar 
-        isOpen={isProfileOpen} 
+      <ProfileSidebar
+        isOpen={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
-        user={user}
+        user={displayUser}
         onUpdateImage={handleUpdateImage}
       />
     </div>

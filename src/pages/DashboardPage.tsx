@@ -27,12 +27,12 @@ interface Simulation {
 const initialSimulations: Simulation[] = [
   {
     courseId: 'se-ii',
-    title: 'Software Engineering II',
+    title: 'Data Science',
     subtitle: 'Ac. Year 2025-26',
     status: 'In Progress',
     instructor: 'Pankaj Patil',
     timeLeft: '12h',
-    masteryLevel: 65,
+    masteryLevel: 0,
     image: '/src/assets/simulation_se_ii.png',
     isArchived: false
   },
