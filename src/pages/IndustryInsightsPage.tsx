@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { Card } from '../components/ui/Card';
 import { 
@@ -23,6 +24,11 @@ const topCompanies = [
 ];
 
 export const IndustryInsightsPage = () => {
+  const [lastUpdated] = useState(() => {
+    const d = new Date();
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  });
+
   return (
     <DashboardLayout>
       <div className="space-y-12">
@@ -32,9 +38,14 @@ export const IndustryInsightsPage = () => {
             <h2 className="text-4xl font-black text-slate-900 mb-3 tracking-tight">Industry Insights</h2>
             <p className="text-slate-500 font-bold">Real-time market intelligence and career analytics.</p>
           </div>
-          <div className="px-6 py-2 rounded-full bg-slate-900 text-white text-xs font-black uppercase tracking-widest flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            Live Market Feed
+          <div className="flex flex-col items-end gap-3">
+            <div className="px-6 py-2 rounded-full bg-slate-900 text-white text-xs font-black uppercase tracking-widest flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              Live Market Feed
+            </div>
+            <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+              Last Updated: <span className="text-indigo-600">{lastUpdated}</span>
+            </div>
           </div>
         </div>
 

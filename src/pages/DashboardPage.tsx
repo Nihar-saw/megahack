@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { SimulationCard } from '../components/dashboard/SimulationCard';
 import { Button } from '../components/ui/Button';
@@ -7,58 +8,96 @@ import {
   Award, 
   TrendingUp, 
   Target,
-  ArrowUpRight
+  ArrowUpRight,
+  Archive
 } from 'lucide-react';
 
-const simulations = [
+interface Simulation {
+  courseId: string;
+  title: string;
+  subtitle: string;
+  status: 'In Progress' | 'Completed' | 'Trending' | 'Archived';
+  instructor: string;
+  timeLeft?: string;
+  masteryLevel: number;
+  image: string;
+  isArchived: boolean;
+}
+
+const initialSimulations: Simulation[] = [
   {
+    courseId: 'se-ii',
     title: 'Software Engineering II',
     subtitle: 'Ac. Year 2025-26',
-    status: 'In Progress' as const,
+    status: 'In Progress',
     instructor: 'Pankaj Patil',
     timeLeft: '12h',
     masteryLevel: 65,
     image: '/src/assets/simulation_se_ii.png',
-    avatar: '/src/assets/avatar_pankaj.png'
+    isArchived: false
   },
   {
+    courseId: 'algorithms',
     title: 'Analysis of Algorithms',
     subtitle: 'Batch A - Advanced',
-    status: 'Completed' as const,
+    status: 'Completed',
     instructor: 'Dr. Nilesh Deotale',
     masteryLevel: 100,
     image: '/src/assets/simulation_algorithms.png',
-    avatar: '/src/assets/avatar_nilesh.png'
+    isArchived: false
   },
   {
+    courseId: 'iot',
     title: 'MDM & IoT Systems',
     subtitle: 'Advanced Workshop',
-    status: 'Trending' as const,
+    status: 'Trending',
     instructor: 'Hiral Patel',
     timeLeft: '12h',
     masteryLevel: 42,
     image: '/src/assets/simulation_iot.png',
-    avatar: '/src/assets/avatar_hiral.png'
+    isArchived: false
   }
 ];
 
 export const DashboardPage = () => {
+  const [sims, setSims] = useState<Simulation[]>(initialSimulations);
+  const [showArchived, setShowArchived] = useState(false);
+
+  const handleArchive = (id: string) => {
+    setSims(prev => prev.map(sim => 
+      sim.courseId === id ? { ...sim, isArchived: true, status: 'Archived' as const } : sim
+    ));
+  };
+
+  const filteredSims = sims.filter(sim => sim.isArchived === showArchived);
+
   return (
     <DashboardLayout>
       <div className="space-y-12">
         {/* Welcome Header */}
         <div className="flex justify-between items-end">
           <div>
-            <h2 className="text-4xl font-black text-slate-900 mb-3 tracking-tight">Active Simulations</h2>
-            <p className="text-slate-500 font-bold">Manage your professional career paths</p>
+            <h2 className="text-4xl font-black text-slate-900 mb-3 tracking-tight">
+              {showArchived ? 'Archived Simulations' : 'Active Simulations'}
+            </h2>
+            <p className="text-slate-500 font-bold">
+              {showArchived ? 'View your completed professional journeys' : 'Manage your professional career paths'}
+            </p>
           </div>
           <div className="flex gap-4">
-            <Button variant="outline" className="rounded-2xl px-6 py-4 font-black border-2 hover:bg-white active:scale-95 transition-all">
-              View Archives
+            <Button 
+              variant={showArchived ? "secondary" : "outline"}
+              onClick={() => setShowArchived(!showArchived)}
+              className={`rounded-2xl px-6 py-4 font-black border-2 active:scale-95 transition-all flex items-center gap-2 ${showArchived ? 'bg-indigo-600 border-indigo-600 text-white' : 'hover:bg-white'}`}
+            >
+              <Archive className="w-4 h-4" />
+              {showArchived ? 'Back to Active' : 'View Archives'}
             </Button>
-            <Button className="rounded-2xl px-6 py-4 font-black shadow-xl shadow-indigo-200 active:scale-95 transition-all bg-indigo-600">
-              Start New Simulation
-            </Button>
+            {!showArchived && (
+              <Button className="rounded-2xl px-6 py-4 font-black shadow-xl shadow-indigo-200 active:scale-95 transition-all bg-indigo-600">
+                Start New Simulation
+              </Button>
+            )}
           </div>
         </div>
 
@@ -89,17 +128,23 @@ export const DashboardPage = () => {
 
         {/* Simulations Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {simulations.map((sim, index) => (
-            <SimulationCard key={index} {...sim} />
+          {filteredSims.map((sim, index) => (
+            <SimulationCard 
+              key={index} 
+              {...sim} 
+              onArchive={handleArchive}
+            />
           ))}
           
           {/* Add New Simulation Placeholder */}
-          <button className="border-4 border-dashed border-slate-100 rounded-[2rem] flex flex-col items-center justify-center p-12 hover:border-indigo-100 hover:bg-slate-50/50 transition-all group min-h-[500px]">
-            <div className="w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-white group-hover:shadow-lg transition-all">
-              <Plus className="w-8 h-8 text-slate-400 group-hover:text-indigo-600" />
-            </div>
-            <span className="text-lg font-black text-slate-400 group-hover:text-slate-900 transition-colors">Browse Simulations</span>
-          </button>
+          {!showArchived && (
+            <button className="border-4 border-dashed border-slate-100 rounded-[2rem] flex flex-col items-center justify-center p-12 hover:border-indigo-100 hover:bg-slate-50/50 transition-all group min-h-[500px]">
+              <div className="w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-white group-hover:shadow-lg transition-all">
+                <Plus className="w-8 h-8 text-slate-400 group-hover:text-indigo-600" />
+              </div>
+              <span className="text-lg font-black text-slate-400 group-hover:text-slate-900 transition-colors">Browse Simulations</span>
+            </button>
+          )}
         </div>
       </div>
     </DashboardLayout>

@@ -1,18 +1,22 @@
 import { MoreVertical, Folder, BarChart3, Clock, User, ArrowRight } from 'lucide-react';
 import { Button } from '../ui/Button';
+import { Link } from 'react-router-dom';
 
 interface SimulationCardProps {
+  courseId: string;
   title: string;
   subtitle: string;
-  status: 'In Progress' | 'Completed' | 'Trending';
+  status: 'In Progress' | 'Completed' | 'Trending' | 'Archived';
   instructor: string;
   timeLeft?: string;
   masteryLevel: number;
   image: string;
-  avatar: string;
+  onArchive?: (id: string) => void;
+  isArchived?: boolean;
 }
 
 export const SimulationCard = ({
+  courseId,
   title,
   subtitle,
   status,
@@ -20,7 +24,8 @@ export const SimulationCard = ({
   timeLeft,
   masteryLevel,
   image,
-  avatar
+  onArchive,
+  isArchived = false
 }: SimulationCardProps) => {
   const statusColors = {
     'In Progress': 'bg-white/90 text-slate-900',
@@ -37,13 +42,19 @@ export const SimulationCard = ({
           className="w-full h-full object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500" 
         />
         <div className="absolute top-8 left-8">
-          <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm ${statusColors[status]}`}>
-            {status}
+          <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm ${statusColors[status as keyof typeof statusColors]}`}>
+            {isArchived ? 'Archived' : status}
           </span>
         </div>
-        <button className="absolute top-8 right-8 w-10 h-10 rounded-full bg-black/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/40 transition-colors">
-          <MoreVertical className="w-5 h-5" />
-        </button>
+        {!isArchived && (
+          <button 
+            onClick={() => onArchive?.(courseId)}
+            className="absolute top-8 right-8 w-10 h-10 rounded-full bg-black/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/40 transition-colors"
+            title="Archive Simulation"
+          >
+            <MoreVertical className="w-5 h-5" />
+          </button>
+        )}
       </div>
 
       <div className="p-8 flex-1 flex flex-col">
@@ -91,9 +102,11 @@ export const SimulationCard = ({
               <BarChart3 className="w-5 h-5" />
             </button>
           </div>
-          <Button className="bg-[#0f172a] hover:bg-slate-800 text-white rounded-xl px-6 py-2.5 text-xs font-black flex items-center gap-2 transition-all active:scale-95">
-            Enter Simulation <ArrowRight className="w-4 h-4" />
-          </Button>
+          <Link to={`/assessment?course=${courseId}`}>
+            <Button className="bg-[#0f172a] hover:bg-slate-800 text-white rounded-xl px-6 py-2.5 text-xs font-black flex items-center gap-2 transition-all active:scale-95">
+              Enter Simulation <ArrowRight className="w-4 h-4" />
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

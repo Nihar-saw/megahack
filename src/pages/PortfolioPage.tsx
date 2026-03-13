@@ -97,19 +97,27 @@ export const PortfolioPage = () => {
               </h4>
               <div className="space-y-4">
                 {[
-                  { name: 'Algorithm Specialist', issuer: 'JobSim Validated', date: 'March 2026' },
-                  { name: 'UI/UX Fundamentals', issuer: 'Google Certified', date: 'Feb 2026' },
-                ].map((badge, idx) => (
-                  <div key={idx} className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-slate-100">
-                    <div className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-white flex-shrink-0">
-                      <ShieldCheck className="w-6 h-6" />
+                  { name: 'Algorithm Specialist', issuer: 'JobSim Validated', date: 'March 2026', status: 'Completed' },
+                  { name: 'SE-II Architect', issuer: 'JobSim Validated', date: 'March 2026', status: 'Completed' },
+                  { name: 'UI/UX Fundamentals', issuer: 'Google Certified', date: 'Feb 2026', status: 'In Progress' },
+                ].filter(b => b.status === 'Completed').map((badge, idx) => (
+                  <div key={idx} className="flex items-center gap-4 p-5 bg-white rounded-3xl border border-indigo-100 shadow-sm shadow-indigo-50 group hover:border-indigo-600 transition-all">
+                    <div className="w-12 h-12 rounded-full bg-emerald-500 flex items-center justify-center text-white flex-shrink-0 shadow-lg shadow-emerald-100 group-hover:scale-110 transition-transform">
+                      <ShieldCheck className="w-7 h-7" />
                     </div>
                     <div>
                       <div className="font-black text-sm text-slate-900">{badge.name}</div>
                       <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{badge.issuer}</div>
+                      <div className="text-[9px] font-bold text-emerald-600 mt-1 uppercase tracking-tight">Verified • {badge.date}</div>
                     </div>
                   </div>
                 ))}
+                {/* Fallback for empty state */}
+                {[].length === 0 && (
+                   <p className="text-xs font-bold text-slate-400 text-center py-4 border-2 border-dashed border-slate-200 rounded-3xl">
+                     Complete simulations to unlock badges
+                   </p>
+                )}
               </div>
             </Card>
 

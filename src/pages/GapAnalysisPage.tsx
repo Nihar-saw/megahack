@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
@@ -34,6 +35,7 @@ const gaps = [
 ];
 
 export const GapAnalysisPage = () => {
+  const navigate = useNavigate();
   return (
     <DashboardLayout>
       <div className="space-y-12">
@@ -51,7 +53,7 @@ export const GapAnalysisPage = () => {
               Skill vs. Industry Index
             </h3>
             
-            <div className="space-y-8">
+            <div className="space-y-8 mb-16">
               {skillMatches.map((skill, index) => (
                 <div key={index} className="space-y-3">
                   <div className="flex justify-between items-end">
@@ -86,6 +88,26 @@ export const GapAnalysisPage = () => {
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Development Graph */}
+            <div className="pt-10 border-t border-slate-100">
+              <h4 className="text-xl font-black text-slate-900 mb-8 flex items-center gap-3">
+                <ArrowUpRight className="w-6 h-6 text-emerald-500" />
+                Development Progress
+              </h4>
+              <div className="h-48 flex items-end gap-6 px-4">
+                {[45, 52, 48, 65, 72, 85, 82].map((val, i) => (
+                  <div key={i} className="flex-1 flex flex-col items-center gap-4 group">
+                    <div className="text-[10px] font-black text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">{val}%</div>
+                    <div 
+                      className={`w-full rounded-t-xl transition-all duration-500 group-hover:bg-indigo-600 ${i === 6 ? 'bg-indigo-600' : 'bg-slate-100'}`}
+                      style={{ height: `${val}%` }}
+                    />
+                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'][i]}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </Card>
 
@@ -143,7 +165,11 @@ export const GapAnalysisPage = () => {
               <p className="text-emerald-700 font-bold">Only 3 major certifications away from Top-Tier eligibility.</p>
             </div>
           </div>
-          <Button variant="outline" className="px-10 py-4 rounded-2xl border-2 border-emerald-200 text-emerald-700 bg-white font-black hover:bg-emerald-100 transition-all active:scale-95 shadow-lg shadow-emerald-100">
+          <Button 
+            onClick={() => navigate('/career-path')}
+            variant="outline" 
+            className="px-10 py-4 rounded-2xl border-2 border-emerald-200 text-emerald-700 bg-white font-black hover:bg-emerald-100 transition-all active:scale-95 shadow-lg shadow-emerald-100"
+          >
             View Career Roadmap
           </Button>
         </div>
