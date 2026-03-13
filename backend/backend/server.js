@@ -37,15 +37,30 @@ app.use((req, res) => {
 const PORT = process.env.PORT || 5001;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/jobsim';
 
+let dbConnected = false;
+
 mongoose
   .connect(MONGO_URI)
   .then(() => {
-    console.log('✅ MongoDB connected:', MONGO_URI);
+    dbConnected = true;
+    console.log('✅ MongoDB connected:', MONGO_URI.split('@')[1] ? 'Atlas Cluster' : MONGO_URI);
     app.listen(PORT, () => {
       console.log(`🚀 JobSim API server running on http://localhost:${PORT}`);
     });
   })
   .catch((err) => {
-    console.error('❌ MongoDB connection failed:', err.message);
-    process.exit(1);
+    console.error('❌ MongoDB connection failed!');
+    console.error('   Error Message:', err.message);
+    if (err.message.includes('SSL alert number 80')) {
+      console.error('   👉 DIAGNOSIS: This usually means your IP address is not whitelisted in MongoDB Atlas.');
+      console.error('   👉 FIX: Log in to MongoDB Atlas and add your current IP to "Network Access".');
+    }
+    
+    console.log('⚠️  Starting server in OFFLINE MODE (No database connection)');
+    app.listen(PORT, () => {
+      console.log(`🚀 JobSim API server running on http://localhost:${PORT} (Database Offline)`);
+    });
   });
+
+// Export dbConnected for use in routes if needed
+app.set('dbConnected', () => dbConnected);

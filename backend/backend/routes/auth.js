@@ -11,6 +11,24 @@ const generateToken = (id) => {
   });
 };
 
+// Fallback Mock User for Offline Mode
+const MOCK_USER = {
+  _id: 'mock-user-id-123',
+  name: 'Trial User',
+  email: 'admin@example.com',
+  password: 'password123',
+  location: 'Remote',
+  profileImage: '',
+  assessmentProgress: 1,
+  currentCourseId: 'default',
+  completedDays: {},
+  performanceScores: {},
+  assessmentRemarks: {},
+  interviewScores: {},
+  portfolioCount: 0,
+  createdAt: new Date(),
+};
+
 // Helper: build safe user response (no password)
 const userResponse = (user) => ({
   _id: user._id,
@@ -30,11 +48,25 @@ const userResponse = (user) => ({
 
 // ─── POST /api/auth/signup ─────────────────────────────────────────
 router.post('/signup', async (req, res) => {
+  const dbConnected = req.app.get('dbConnected')();
+  
   try {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ success: false, message: 'Please fill all fields' });
+    }
+
+    if (!dbConnected) {
+      console.log('📝 Signup attempted in OFFLINE MODE');
+      // In offline mode, we just pretend it worked
+      const token = generateToken(MOCK_USER._id);
+      return res.status(201).json({
+        success: true,
+        token,
+        user: userResponse({ ...MOCK_USER, name, email }),
+        message: 'Signed up in offline mode (Database not connected)'
+      });
     }
 
     const existingUser = await User.findOne({ email });
@@ -57,11 +89,31 @@ router.post('/signup', async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
+  const dbConnected = req.app.get('dbConnected')();
+
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({ success: false, message: 'Please provide email and password' });
+    }
+
+    if (!dbConnected) {
+      console.log('🔑 Login attempted in OFFLINE MODE');
+      if (email === MOCK_USER.email && password === MOCK_USER.password) {
+        const token = generateToken(MOCK_USER._id);
+        return res.status(200).json({
+          success: true,
+          token,
+          user: userResponse(MOCK_USER),
+          message: 'Logged in to mock account (Database offline)'
+        });
+      } else {
+        return res.status(401).json({ 
+          success: false, 
+          message: 'Offline Mode: Use admin@example.com / password123 to log in while database is disconnected.' 
+        });
+      }
     }
 
     // Include password field (select: false by default)
@@ -90,7 +142,13 @@ router.post('/login', async (req, res) => {
 
 // ─── GET /api/auth/me  (protected) ────────────────────────────────
 router.get('/me', verifyToken, async (req, res) => {
+  const dbConnected = req.app.get('dbConnected')();
+  
   try {
+    if (!dbConnected) {
+      return res.status(200).json({ success: true, user: userResponse(MOCK_USER) });
+    }
+
     const user = await User.findById(req.userId);
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
