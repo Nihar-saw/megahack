@@ -21,7 +21,49 @@ const roles = [
     description: 'Handles both frontend and backend development with Node.js and PostgreSQL.',
     match: 72,
     icon: <Layers className="w-6 h-6 text-emerald-600" />
-  }
+  },
+  {
+    title: 'UI/UX Designer',
+    description: 'Focuses on creating intuitive and visually appealing designs with Figma.',
+    match: 65,
+    icon: <Circle className="w-6 h-6 text-amber-600" />
+  },
+  {
+    title: 'DevOps Engineer',
+    description: 'Manages cloud infrastructure and CI/CD pipelines using AWS and Docker.',
+    match: 58,
+    icon: <CheckCircle2 className="w-6 h-6 text-red-600" />
+  },
+  {
+    title: 'Data Scientist',
+    description: 'Analyzes complex datasets to extract actionable insights using Python and machine learning.',
+    match: 42,
+    icon: <TrendingUp className="w-6 h-6 text-violet-600" />
+    },
+    {
+      title: 'Mobile App Developer',
+      description: 'Builds cross-platform mobile applications using React Native and Flutter.',
+      match: 38,
+      icon: <Layers className="w-6 h-6 text-pink-600" />
+    },
+    {
+      title: 'Product Manager', 
+      description: 'Oversees product development lifecycle and coordinates between engineering and design teams.',
+      match: 30,
+      icon: <Circle className="w-6 h-6 text-yellow-600" />
+    },
+    {
+      title: 'QA Engineer',
+      description: 'Ensures software quality through automated testing and manual QA processes.',
+      match: 25,
+      icon: <CheckCircle2 className="w-6 h-6 text-cyan-600" />
+    },
+    {
+      title: 'Technical Writer', 
+      description: 'Creates clear and concise documentation for software products and APIs.',
+      match: 20,
+      icon: <TrendingUp className="w-6 h-6 text-gray-600" />
+    }
 ];
 
 const roadmap = [

@@ -4,6 +4,7 @@ import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { Modal } from '../components/ui/Modal';
+import { Toast } from '../components/ui/Toast';
 import { Clock, Zap, ChevronRight, ChevronLeft, CheckCircle2 } from 'lucide-react';
 
 const assessmentContent = [
@@ -56,11 +57,13 @@ export const AssessmentPage = () => {
   const navigate = useNavigate();
   const [currentDay, setCurrentDay] = useState(1);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [showToast, setShowToast] = useState(false);
   const currentAssessment = assessmentContent[currentDay - 1];
 
   const handleNext = () => {
     if (currentDay < 7) {
       setCurrentDay(currentDay + 1);
+      setShowToast(true);
     } else {
       setIsSuccessModalOpen(true);
     }
@@ -178,6 +181,12 @@ export const AssessmentPage = () => {
             </div>
           </div>
         </Modal>
+
+        <Toast 
+          message="Successfully submitted exercise!" 
+          isVisible={showToast} 
+          onClose={() => setShowToast(false)} 
+        />
       </div>
     </DashboardLayout>
   );
