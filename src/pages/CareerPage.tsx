@@ -31,21 +31,23 @@ const roles = [
     ]
   },
   {
-    title : 'Data Scientist',
-    description: 'Analyzes complex data sets to drive informed business decisions using Python and machine learning.',
-    match: 58,
-    icon: <BookOpen className="w-6 h-6 text-amber-500" />,
-    topics: ['Python for Data Science', 'Machine Learning', 'Data Visualization', 'Big Data Tools'],
+    id: 'fullstack',
+    title: 'Full Stack Engineer',
+    description: 'Handles both frontend and backend development with Node.js and PostgreSQL.',
+    match: 72,
+    icon: <Layers className="w-6 h-6 text-emerald-600" />,
+    topics: ['Node.js', 'PostgreSQL', 'Auth Systems', 'API Design'],
     roadmap: [
-      { status: 'completed', title: 'Python Programming', description: 'Core language features and libraries.' },
-      { status: 'in-progress', title: 'Data Analysis', description: 'Pandas, NumPy, and exploratory data analysis.' },
-      { status: 'locked', title: 'Machine Learning', description: 'Scikit-learn, model evaluation, and deployment.' }
+      { status: 'completed', title: 'Backend Basics', description: 'Node.js and Express fundamentals.' },
+      { status: 'in-progress', title: 'Database Design', description: 'SQL, normalization, and indexing.' },
+      { status: 'locked', title: 'Authentication', description: 'JWT, OAuth2, and session management.' },
+      { status: 'locked', title: 'System Scaling', description: 'Caching, load balancing, and microservices.' }
     ]
   },
   {
     id: 'ux',
-    title: 'Web Development',
-    description: 'Handles both frontend and backend development with Node.js and PostgreSQL.',
+    title: 'UI/UX Designer',
+    description: 'Focuses on creating intuitive and visually appealing designs with Figma.',
     match: 65,
     icon: <Circle className="w-6 h-6 text-amber-600" />,
     topics: ['Figma Mastery', 'User Research', 'Prototyping', 'Design Systems'],
@@ -56,17 +58,15 @@ const roles = [
     ]
   },
   {
-    id: 'fullstack',
-    title: 'UI/UX Designer',
-    description: 'Designs intuitive user experiences and interfaces with a strong focus on usability and aesthetics.',
-    match: 72,
-    icon: <Layers className="w-6 h-6 text-emerald-600" />,
-    topics: ['Node.js', 'PostgreSQL', 'Auth Systems', 'API Design'],
+    title : 'Data Scientist',
+    description: 'Analyzes complex data sets to drive informed business decisions using Python and machine learning.',
+    match: 58,
+    icon: <BookOpen className="w-6 h-6 text-amber-500" />,
+    topics: ['Python for Data Science', 'Machine Learning', 'Data Visualization', 'Big Data Tools'],
     roadmap: [
-      { status: 'completed', title: 'Backend Basics', description: 'Node.js and Express fundamentals.' },
-      { status: 'in-progress', title: 'Database Design', description: 'SQL, normalization, and indexing.' },
-      { status: 'locked', title: 'Authentication', description: 'JWT, OAuth2, and session management.' },
-      { status: 'locked', title: 'System Scaling', description: 'Caching, load balancing, and microservices.' }
+      { status: 'completed', title: 'Python Programming', description: 'Core language features and libraries.' },
+      { status: 'in-progress', title: 'Data Analysis', description: 'Pandas, NumPy, and exploratory data analysis.' },
+      { status: 'locked', title: 'Machine Learning', description: 'Scikit-learn, model evaluation, and deployment.' }
     ]
   }
 ];

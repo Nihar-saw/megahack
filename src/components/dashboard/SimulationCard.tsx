@@ -4,10 +4,9 @@ import { Button } from '../ui/Button';
 import { Link } from 'react-router-dom';
 
 const courseStats: Record<string, { questions: number; days: number; avgScore: string }> = {
-  'se-ii':       { questions: 35, days: 7, avgScore: '72%' },
-  'algorithms':  { questions: 42, days: 7, avgScore: '91%' },
-  'iot':         { questions: 28, days: 7, avgScore: '58%' },
-  'data-sci':    { questions: 30, days: 7, avgScore: '—'   },
+  'data-science':    { questions: 30, days: 7, avgScore: '—' },
+  'web-development': { questions: 35, days: 7, avgScore: '—' },
+  'ui-ux':           { questions: 28, days: 7, avgScore: '—' },
 };
 
 interface SimulationCardProps {

@@ -10,6 +10,8 @@ export interface AuthUser {
   role: string;
   location: string;
   profileImage: string;
+  assessmentProgress: number;
+  currentCourseId: string;
   createdAt: string;
 }
 

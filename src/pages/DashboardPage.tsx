@@ -3,10 +3,10 @@ import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { SimulationCard } from '../components/dashboard/SimulationCard';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
-import { 
-  Plus, 
-  Award, 
-  TrendingUp, 
+import {
+  Plus,
+  Award,
+  TrendingUp,
   Target,
   ArrowUpRight,
   Archive
@@ -26,35 +26,36 @@ interface Simulation {
 
 const initialSimulations: Simulation[] = [
   {
-    courseId: 'se-ii',
+    courseId: 'data-science',
     title: 'Data Science',
-    subtitle: 'Ac. Year 2025-26',
-    status: 'In Progress',
-    instructor: 'Pankaj Patil',
-    timeLeft: '12h',
-    masteryLevel: 0,
-    image: '/src/assets/simulation_se_ii.png',
-    isArchived: false
-  },
-  {
-    courseId: 'algorithms',
-    title: 'Analysis of Algorithms',
-    subtitle: 'Batch A - Advanced',
-    status: 'Completed',
-    instructor: 'Dr. Nilesh Deotale',
-    masteryLevel: 100,
-    image: '/src/assets/simulation_algorithms.png',
-    isArchived: false
-  },
-  {
-    courseId: 'iot',
-    title: 'MDM & IoT Systems',
-    subtitle: 'Advanced Workshop',
+    subtitle: 'Professional Track',
     status: 'Trending',
-    instructor: 'Hiral Patel',
-    timeLeft: '12h',
-    masteryLevel: 42,
-    image: '/src/assets/simulation_iot.png',
+    instructor: 'Dr. Sarah Chen',
+    timeLeft: '7 Days',
+    masteryLevel: 0,
+    image: 'https://images.unsplash.com/photo-1551288049-bbda33658fb0?w=800&q=80',
+    isArchived: false
+  },
+  {
+    courseId: 'web-development',
+    title: 'Web Development',
+    subtitle: 'Fullstack Mastery',
+    status: 'Trending',
+    instructor: 'Alex Rivera',
+    timeLeft: '7 Days',
+    masteryLevel: 0,
+    image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&q=80',
+    isArchived: false
+  },
+  {
+    courseId: 'ui-ux',
+    title: 'UI/UX Design',
+    subtitle: 'Creative Professional',
+    status: 'Trending',
+    instructor: 'Maya Patel',
+    timeLeft: '7 Days',
+    masteryLevel: 0,
+    image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&q=80',
     isArchived: false
   }
 ];
@@ -64,13 +65,13 @@ export const DashboardPage = () => {
   const [showArchived, setShowArchived] = useState(false);
 
   const handleArchive = (id: string) => {
-    setSims(prev => prev.map(sim => 
+    setSims(prev => prev.map(sim =>
       sim.courseId === id ? { ...sim, isArchived: true, status: 'Archived' as const } : sim
     ));
   };
 
   const handleRestore = (id: string) => {
-    setSims(prev => prev.map(sim => 
+    setSims(prev => prev.map(sim =>
       sim.courseId === id ? { ...sim, isArchived: false, status: 'In Progress' as const } : sim
     ));
   };
@@ -91,7 +92,7 @@ export const DashboardPage = () => {
             </p>
           </div>
           <div className="flex gap-4">
-            <Button 
+            <Button
               variant={showArchived ? "secondary" : "outline"}
               onClick={() => setShowArchived(!showArchived)}
               className={`rounded-2xl px-6 py-4 font-black border-2 active:scale-95 transition-all flex items-center gap-2 ${showArchived ? 'bg-indigo-600 border-indigo-600 text-white' : 'hover:bg-white'}`}
@@ -109,24 +110,24 @@ export const DashboardPage = () => {
 
         {/* Status Indicators */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <StatMiniCard 
-            title="Skill Score" 
-            value="82/100" 
-            change="+12%" 
+          <StatMiniCard
+            title="Skill Score"
+            value="82/100"
+            change="+12%"
             icon={<Award className="w-6 h-6 text-indigo-600" />}
             description="Avg. across all domains"
           />
-          <StatMiniCard 
-            title="Market Value" 
-            value="$65k - $80k" 
-            change="+$5k" 
+          <StatMiniCard
+            title="Market Value"
+            value="$65k - $80k"
+            change="+$5k"
             icon={<TrendingUp className="w-6 h-6 text-emerald-600" />}
             description="Estimated annual salary"
           />
-          <StatMiniCard 
-            title="Industry Readiness" 
-            value="74%" 
-            change="+8%" 
+          <StatMiniCard
+            title="Industry Readiness"
+            value="74%"
+            change="+8%"
             icon={<Target className="w-6 h-6 text-amber-600" />}
             description="Match for target roles"
           />
@@ -135,14 +136,14 @@ export const DashboardPage = () => {
         {/* Simulations Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredSims.map((sim, index) => (
-            <SimulationCard 
-              key={index} 
-              {...sim} 
+            <SimulationCard
+              key={index}
+              {...sim}
               onArchive={handleArchive}
               onRestore={handleRestore}
             />
           ))}
-          
+
           {/* Add New Simulation Placeholder */}
           {!showArchived && (
             <button className="border-4 border-dashed border-slate-100 rounded-[2rem] flex flex-col items-center justify-center p-12 hover:border-indigo-100 hover:bg-slate-50/50 transition-all group min-h-[500px]">

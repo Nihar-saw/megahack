@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Target, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
