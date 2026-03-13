@@ -4,7 +4,7 @@ import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { Toast } from '../components/ui/Toast';
-import { Target, Zap, ChevronRight, ChevronLeft, CheckCircle2 } from 'lucide-react';
+import { Target, Zap, ChevronRight, ChevronLeft, CheckCircle2, Bot } from 'lucide-react';
 import { FileUpload } from '../components/ui/FileUpload';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
@@ -236,17 +236,23 @@ export const AssessmentPage = () => {
   const [currentDay, setCurrentDay] = useState(user?.assessmentProgress || 1);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(() => {
+    const completed = user?.completedDays?.[courseId] || 0;
+    return completed >= (user?.assessmentProgress || 1);
+  });
   
   // Sync state if user data loads later
   useEffect(() => {
     if (user?.assessmentProgress) {
       setCurrentDay(user.assessmentProgress);
+      const completed = user?.completedDays?.[courseId] || 0;
+      setIsSubmitted(completed >= user.assessmentProgress);
     }
-  }, [user?.assessmentProgress]);
+  }, [user?.assessmentProgress, user?.completedDays, courseId]);
 
   const currentAssessment = assessmentContent[currentDay - 1] || assessmentContent[0];
 
-  const handleNext = async () => {
+  const handleSubmit = async () => {
     // Simulated Grading Logic
     const response = (document.querySelector('textarea') as HTMLTextAreaElement)?.value || '';
     const wordCount = response.trim().split(/\s+/).length;
@@ -260,38 +266,38 @@ export const AssessmentPage = () => {
     const currentScores = user?.performanceScores?.[courseId] || [];
     const newScores = [...currentScores, finalScore];
 
+    const newCompletedDays = { 
+      ...(user?.completedDays || {}), 
+      [courseId]: Math.max((user?.completedDays?.[courseId] || 0), currentDay) 
+    };
+
+    await updateProfile({ 
+      currentCourseId: courseId,
+      completedDays: newCompletedDays,
+      performanceScores: {
+        ...(user?.performanceScores || {}),
+        [courseId]: newScores
+      }
+    });
+
+    setIsSubmitted(true);
+    setShowToast(true);
+
+    if (currentDay === 7) {
+      setIsSuccessModalOpen(true);
+    }
+  };
+
+  const handleNextDay = async () => {
     if (currentDay < 7) {
       const nextDay = currentDay + 1;
       setCurrentDay(nextDay);
-      setShowToast(true);
+      setIsSubmitted(false);
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      // Persist progress
-      const newCompletedDays = { 
-        ...(user?.completedDays || {}), 
-        [courseId]: Math.max((user?.completedDays?.[courseId] || 0), currentDay) 
-      };
       await updateProfile({ 
-        assessmentProgress: nextDay, 
-        currentCourseId: courseId,
-        completedDays: newCompletedDays,
-        performanceScores: {
-          ...(user?.performanceScores || {}),
-          [courseId]: newScores
-        }
+        assessmentProgress: nextDay,
+        currentCourseId: courseId
       });
-    } else {
-      const newCompletedDays = { 
-        ...(user?.completedDays || {}), 
-        [courseId]: 7 
-      };
-      await updateProfile({ 
-        completedDays: newCompletedDays,
-        performanceScores: {
-          ...(user?.performanceScores || {}),
-          [courseId]: newScores
-        }
-      });
-      setIsSuccessModalOpen(true);
     }
   };
 
@@ -306,8 +312,30 @@ export const AssessmentPage = () => {
     }
   };
 
+  if (courseId === 'default' && !user?.currentCourseId) {
+    return (
+      <DashboardLayout>
+        <div className="min-h-[70vh] flex flex-col items-center justify-center text-center p-12">
+          <div className="w-24 h-24 bg-slate-100 rounded-[3rem] flex items-center justify-center mb-8">
+            <Target className="w-12 h-12 text-slate-300" />
+          </div>
+          <h2 className="text-4xl font-black text-slate-900 mb-4">Simulation Locked</h2>
+          <p className="text-xl text-slate-500 font-bold max-w-md mb-12">
+            You must select a professional track from the dashboard to begin your industry simulation.
+          </p>
+          <Button 
+            onClick={() => navigate('/dashboard')}
+            className="px-12 h-20 rounded-3xl bg-indigo-600 text-white text-xl font-black shadow-2xl shadow-indigo-200 hover:scale-105 active:scale-95 transition-all"
+          >
+            Go to Dashboard
+          </Button>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   return (
-    <DashboardLayout>
+    <DashboardLayout hideNavigation={!isSubmitted}>
       <div className="max-w-6xl mx-auto space-y-12">
         {/* Header Section */}
         <motion.div 
@@ -430,29 +458,41 @@ export const AssessmentPage = () => {
                   <div className="flex-1">
                     <FileUpload onFilesSelected={(files: File[]) => console.log('Selected files:', files)} />
                   </div>
-                  <div className="flex flex-col justify-end gap-4 min-w-[240px]">
-                    <Button 
-                      onClick={handleNext}
-                      className="w-full h-20 rounded-3xl bg-indigo-600 text-white text-lg font-black shadow-2xl shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition-all flex items-center justify-center gap-4 group"
-                    >
-                      {currentDay === 7 ? "Complete Track" : "Submit Exercise"}
-                      <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-                    </Button>
+                  <div className="flex flex-col justify-end gap-4 min-w-[280px]">
+                    {!isSubmitted ? (
+                      <Button 
+                        onClick={handleSubmit}
+                        className="w-full h-20 rounded-3xl bg-indigo-600 text-white text-lg font-black shadow-2xl shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition-all flex items-center justify-center gap-4 group"
+                      >
+                        {currentDay === 7 ? "Finalize Track" : "Submit Exercise"}
+                        <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                      </Button>
+                    ) : (
+                      <Button 
+                        onClick={currentDay === 7 ? () => setIsSuccessModalOpen(true) : handleNextDay}
+                        className="w-full h-20 rounded-3xl bg-emerald-500 text-white text-lg font-black shadow-2xl shadow-emerald-200 hover:bg-emerald-600 active:scale-95 transition-all flex items-center justify-center gap-4 group animate-in zoom-in-95 duration-300"
+                      >
+                        {currentDay === 7 ? "View Results" : "Proceed to Day " + (currentDay + 1)}
+                        <CheckCircle2 className="w-6 h-6" />
+                      </Button>
+                    )}
                     <div className="flex gap-4">
                       <Button 
                         variant="outline" 
                         onClick={handleBack}
-                        disabled={currentDay === 1}
+                        disabled={currentDay === 1 || !isSubmitted}
                         className="flex-1 h-14 rounded-2xl border-2 border-slate-100 text-slate-400 font-black text-xs uppercase tracking-widest hover:bg-slate-50 hover:text-slate-600 disabled:opacity-30 transition-all flex items-center justify-center gap-2"
                       >
                         <ChevronLeft className="w-4 h-4" /> Previous
                       </Button>
-                      <Button 
-                        variant="ghost" 
-                        className="flex-1 h-14 rounded-2xl font-black text-xs uppercase tracking-widest text-slate-400 hover:text-indigo-600 transition-all"
-                      >
-                        Save Progress
-                      </Button>
+                      {!isSubmitted && (
+                        <Button 
+                          variant="ghost" 
+                          className="flex-1 h-14 rounded-2xl font-black text-xs uppercase tracking-widest text-slate-400 hover:text-indigo-600 transition-all"
+                        >
+                          Save Draft
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -467,27 +507,27 @@ export const AssessmentPage = () => {
             <motion.div 
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              className="w-24 h-24 bg-emerald-50 rounded-3xl flex items-center justify-center mx-auto mb-10 shadow-xl shadow-emerald-100"
+              className="w-24 h-24 bg-blue-50 rounded-3xl flex items-center justify-center mx-auto mb-10 shadow-xl shadow-blue-100"
             >
-              <CheckCircle2 className="w-12 h-12 text-emerald-500" />
+              <Bot className="w-12 h-12 text-blue-600" />
             </motion.div>
             <h2 className="text-4xl font-black text-slate-900 mb-4 tracking-tight">Mission Accomplished!</h2>
             <p className="text-lg text-slate-500 font-bold leading-relaxed mb-12 max-w-sm mx-auto">
-              Your professional journey in <span className="text-indigo-600">{courseName}</span> is complete. Our experts are reviewing your work.
+              You've completed the 7-day technical assessment for <span className="text-indigo-600">{courseName}</span>. Your final step is the AI Technical Interview.
             </p>
             <div className="space-y-4">
               <Button 
-                onClick={() => navigate('/dashboard')}
-                className="w-full h-16 rounded-2xl text-lg font-black bg-slate-900 text-white shadow-2xl active:scale-95 transition-all"
+                onClick={() => navigate('/interview?course=' + courseId)}
+                className="w-full h-16 rounded-2xl text-lg font-black bg-blue-600 text-white shadow-xl shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all"
               >
-                Go to Dashboard
+                Start AI Interview
               </Button>
               <Button 
                 variant="ghost"
-                onClick={() => setIsSuccessModalOpen(false)}
+                onClick={() => navigate('/dashboard')}
                 className="w-full py-4 rounded-xl text-sm font-black text-slate-400 hover:text-slate-900 transition-all"
               >
-                Download Performance Report
+                Return to Dashboard
               </Button>
             </div>
           </div>

@@ -9,6 +9,7 @@ import { PortfolioPage } from './pages/PortfolioPage';
 import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
 import { AssessmentPage } from './pages/AssessmentPage';
+import { AIInterviewPage } from './pages/AIInterviewPage';
 import './App.css';
 
 // Protected route: redirect to /login if not authenticated
@@ -41,6 +42,7 @@ function AppRoutes() {
       <Route path="/gap-analysis" element={<ProtectedRoute><GapAnalysisPage /></ProtectedRoute>} />
       <Route path="/career" element={<ProtectedRoute><CareerPage /></ProtectedRoute>} />
       <Route path="/assessment" element={<ProtectedRoute><AssessmentPage /></ProtectedRoute>} />
+      <Route path="/interview" element={<ProtectedRoute><AIInterviewPage /></ProtectedRoute>} />
       <Route path="/insights" element={<ProtectedRoute><IndustryInsightsPage /></ProtectedRoute>} />
       <Route path="/portfolio" element={<ProtectedRoute><PortfolioPage /></ProtectedRoute>} />
     </Routes>

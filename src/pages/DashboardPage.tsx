@@ -87,10 +87,15 @@ export const DashboardPage = () => {
   const allScores = Object.values(user?.performanceScores || {}).flat() as number[];
   const avgScore = allScores.length > 0 ? allScores.reduce((a, b) => a + b, 0) / allScores.length : 0;
   
+  const allInterviewScores = Object.values(user?.interviewScores || {}).flat() as number[];
+  const avgInterviewScore = allInterviewScores.length > 0 ? allInterviewScores.reduce((a, b) => a + b, 0) / allInterviewScores.length : 0;
+
   const maxDays = 21; // 3 tracks * 7 days
   
   const skillScore = Math.min(Math.round((totalDays / maxDays) * 100), 100);
-  const readiness = Math.min(Math.round((totalDays / maxDays) * 95), 100); // Max 95% readiness as default
+  
+  const baseReadiness = Math.min(Math.round((totalDays / maxDays) * 95), 100); // Max 95% readiness as default
+  const readiness = allInterviewScores.length > 0 ? Math.round((baseReadiness * 0.4) + (avgInterviewScore * 0.6)) : baseReadiness;
   
   // Salary estimate base 30k, increases with performance + days
   // User wants market to increase ONLY based on fairing against assessment
@@ -161,9 +166,9 @@ export const DashboardPage = () => {
           <StatMiniCard
             title="Industry Readiness"
             value={`${readiness}%`}
-            change={`+${Math.round(totalDays * 3.5)}%`}
+            change={allInterviewScores.length > 0 ? `AI Validated` : `+${Math.round(totalDays * 3.5)}%`}
             icon={<Target className="w-6 h-6 text-amber-600" />}
-            description="Match for target roles"
+            description={allInterviewScores.length > 0 ? "Includes Interview Score" : "Match for target roles"}
           />
           <StatMiniCard
             title="Portfolio Score"
