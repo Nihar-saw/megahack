@@ -58,6 +58,15 @@ const userSchema = new mongoose.Schema({
       'ui-ux': [],
     }
   },
+  assessmentRemarks: {
+    type: Map,
+    of: [String],
+    default: {
+      'data-science': [],
+      'web-development': [],
+      'ui-ux': [],
+    }
+  },
   interviewScores: {
     type: Map,
     of: [Number],

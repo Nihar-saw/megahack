@@ -22,6 +22,7 @@ const userResponse = (user) => ({
   currentCourseId: user.currentCourseId,
   completedDays: user.completedDays,
   performanceScores: user.performanceScores,
+  assessmentRemarks: user.assessmentRemarks,
   interviewScores: user.interviewScores,
   portfolioCount: user.portfolioCount || 0,
   createdAt: user.createdAt,
@@ -103,7 +104,7 @@ router.get('/me', verifyToken, async (req, res) => {
 // ─── PUT /api/auth/profile  (protected) ───────────────────────────
 router.put('/profile', verifyToken, async (req, res) => {
   try {
-    const { name, location, role, profileImage, assessmentProgress, currentCourseId, completedDays, performanceScores, portfolioCount, interviewScores } = req.body;
+    const { name, location, role, profileImage, assessmentProgress, currentCourseId, completedDays, performanceScores, assessmentRemarks, portfolioCount, interviewScores } = req.body;
     const update = {};
     if (name) update.name = name;
     if (location) update.location = location;
@@ -113,6 +114,7 @@ router.put('/profile', verifyToken, async (req, res) => {
     if (currentCourseId !== undefined) update.currentCourseId = currentCourseId;
     if (completedDays !== undefined) update.completedDays = completedDays;
     if (performanceScores !== undefined) update.performanceScores = performanceScores;
+    if (assessmentRemarks !== undefined) update.assessmentRemarks = assessmentRemarks;
     if (interviewScores !== undefined) update.interviewScores = interviewScores;
     if (portfolioCount !== undefined) update.portfolioCount = portfolioCount;
 
