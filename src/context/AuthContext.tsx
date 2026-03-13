@@ -13,6 +13,7 @@ export interface AuthUser {
   assessmentProgress: number;
   currentCourseId: string;
   completedDays: Record<string, number>;
+  performanceScores: Record<string, number[]>;
   createdAt: string;
 }
 
