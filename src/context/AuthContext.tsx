@@ -14,6 +14,7 @@ export interface AuthUser {
   currentCourseId: string;
   completedDays: Record<string, number>;
   performanceScores: Record<string, number[]>;
+  portfolioCount: number;
   createdAt: string;
 }
 

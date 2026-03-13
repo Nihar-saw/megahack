@@ -83,15 +83,25 @@ export const DashboardPage = () => {
   // Calculate Global Metrics
   const completedDaysValues = Object.values(user?.completedDays || {}) as number[];
   const totalDays = completedDaysValues.reduce((a, b) => a + b, 0);
+  
+  const allScores = Object.values(user?.performanceScores || {}).flat() as number[];
+  const avgScore = allScores.length > 0 ? allScores.reduce((a, b) => a + b, 0) / allScores.length : 0;
+  
   const maxDays = 21; // 3 tracks * 7 days
   
   const skillScore = Math.min(Math.round((totalDays / maxDays) * 100), 100);
   const readiness = Math.min(Math.round((totalDays / maxDays) * 95), 100); // Max 95% readiness as default
   
-  // Salary estimate: Base 30k + 2k per completed day
-  const baseSalary = 30;
-  const currentSalary = baseSalary + (totalDays * 2.5);
-  const salaryRange = `$${Math.round(currentSalary)}k - $${Math.round(currentSalary + 15)}k`;
+  // Salary estimate base 30k, increases with performance + days
+  // User wants market to increase ONLY based on fairing against assessment
+  // So we use avgScore as a multiplier for the growth
+  const performanceMultiplier = avgScore / 100;
+  const growth = totalDays * 4.5 * performanceMultiplier;
+  const currentSalary = 30 + growth;
+  const salaryRange = `$${Math.round(currentSalary)}k - $${Math.round(currentSalary + 10)}k`;
+
+  // Portfolio Score: 100 points per item, max 1000
+  const portfolioScore = (user?.portfolioCount || 0) * 100;
 
   const handleArchive = (id: string) => {
     // Note: In a real app, this would update the backend
@@ -133,27 +143,34 @@ export const DashboardPage = () => {
         </div>
 
         {/* Status Indicators */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <StatMiniCard
             title="Skill Score"
             value={`${skillScore}/100`}
             change={`+${totalDays * 4}%`}
             icon={<Award className="w-6 h-6 text-indigo-600" />}
-            description="Cumulative professional growth"
+            description="Professional proficiency"
           />
           <StatMiniCard
             title="Market Value"
-            value={salaryRange}
-            change={`+$${totalDays * 2}k`}
+            value={totalDays > 0 ? salaryRange : "$30k - $40k"}
+            change={`+${Math.round(growth)}k`}
             icon={<TrendingUp className="w-6 h-6 text-emerald-600" />}
-            description="Estimated based on skills"
+            description="Based on performance"
           />
           <StatMiniCard
             title="Industry Readiness"
             value={`${readiness}%`}
             change={`+${Math.round(totalDays * 3.5)}%`}
             icon={<Target className="w-6 h-6 text-amber-600" />}
-            description="Match for top-tier roles"
+            description="Match for target roles"
+          />
+          <StatMiniCard
+            title="Portfolio Score"
+            value={`${portfolioScore}/1000`}
+            change={`+${user?.portfolioCount || 0}`}
+            icon={<Plus className="w-6 h-6 text-fuchsia-600" />}
+            description="Linked exhibits & projects"
           />
         </div>
 

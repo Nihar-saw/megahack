@@ -247,6 +247,19 @@ export const AssessmentPage = () => {
   const currentAssessment = assessmentContent[currentDay - 1] || assessmentContent[0];
 
   const handleNext = async () => {
+    // Simulated Grading Logic
+    const response = (document.querySelector('textarea') as HTMLTextAreaElement)?.value || '';
+    const wordCount = response.trim().split(/\s+/).length;
+    let baseScore = Math.min(Math.round((wordCount / 50) * 100), 100);
+    
+    // Bonus for professional keywords
+    const keywords = ['analyze', 'strategy', 'implement', 'optimization', 'efficiency', 'solution', 'stakeholder'];
+    const bonus = keywords.filter(k => response.toLowerCase().includes(k)).length * 5;
+    const finalScore = Math.min(baseScore + bonus, 100);
+
+    const currentScores = user?.performanceScores?.[courseId] || [];
+    const newScores = [...currentScores, finalScore];
+
     if (currentDay < 7) {
       const nextDay = currentDay + 1;
       setCurrentDay(nextDay);
@@ -260,7 +273,11 @@ export const AssessmentPage = () => {
       await updateProfile({ 
         assessmentProgress: nextDay, 
         currentCourseId: courseId,
-        completedDays: newCompletedDays
+        completedDays: newCompletedDays,
+        performanceScores: {
+          ...(user?.performanceScores || {}),
+          [courseId]: newScores
+        }
       });
     } else {
       const newCompletedDays = { 
@@ -268,7 +285,11 @@ export const AssessmentPage = () => {
         [courseId]: 7 
       };
       await updateProfile({ 
-        completedDays: newCompletedDays
+        completedDays: newCompletedDays,
+        performanceScores: {
+          ...(user?.performanceScores || {}),
+          [courseId]: newScores
+        }
       });
       setIsSuccessModalOpen(true);
     }

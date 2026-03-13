@@ -122,12 +122,12 @@ export const IndustryInsightsPage = () => {
         </div>
 
         {/* Global Market Map CTA */}
-        <Card className="p-12 rounded-[3rem] bg-indigo-600 text-white relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 blur-3xl" />
+        <Card className="p-12 rounded-[3rem] bg-indigo-600 text-blue relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-blue/10 rounded-full -mr-20 -mt-20 blur-3xl" />
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="max-w-xl text-center md:text-left">
               <h3 className="text-3xl font-black mb-4">Explore Global Opportunities</h3>
-              <p className="text-indigo-100 font-medium leading-relaxed">
+              <p className="bg-white text-indigo-600 font-black">
                 Our interactive market map shows the highest-paying regions for your specific skill profile. Move beyond your local geography.
               </p>
             </div>

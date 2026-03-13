@@ -3,7 +3,9 @@ import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { FileUpload } from '../components/ui/FileUpload';
+import { useAuth } from '../context/AuthContext';
 import { 
+  Plus,
   ExternalLink, 
   Trash2, 
   Briefcase, 
@@ -13,15 +15,23 @@ import {
 } from 'lucide-react';
 
 export const PortfolioPage = () => {
+  const { user, updateProfile } = useAuth();
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
-  const handleFilesSelected = (files: File[]) => {
-    setUploadedFiles(files);
+  const handleFilesSelected = async (files: File[]) => {
+    const newFiles = [...uploadedFiles, ...files];
+    setUploadedFiles(newFiles);
+    await updateProfile({ portfolioCount: newFiles.length });
   };
 
-  const removeFile = (index: number) => {
-    setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+  const removeFile = async (index: number) => {
+    const newFiles = uploadedFiles.filter((_, i) => i !== index);
+    setUploadedFiles(newFiles);
+    await updateProfile({ portfolioCount: newFiles.length });
   };
+
+  const portfolioScore = (user?.portfolioCount || 0) * 125; // Simple score: 125 per item, max 1000
+  const scorePercent = Math.min(Math.round((portfolioScore / 1000) * 100), 100);
 
   return (
     <DashboardLayout>
@@ -121,18 +131,29 @@ export const PortfolioPage = () => {
               </div>
             </Card>
 
-            <Card className="p-8 rounded-[2.5rem] border-slate-100 shadow-xl bg-indigo-600 text-white">
-              <h4 className="text-xl font-black mb-4">Portfolio Score</h4>
-              <div className="text-5xl font-black mb-6">840<span className="text-indigo-300 text-lg">/1000</span></div>
-              <p className="text-indigo-100 font-medium text-sm leading-relaxed mb-6">
-                Your portfolio is in the <strong>Top 5%</strong> of applicants for Full Stack roles.
-              </p>
-              <div className="h-2 bg-indigo-900/30 rounded-full overflow-hidden mb-8">
-                <div className="h-full bg-emerald-400 rounded-full" style={{ width: '84%' }} />
+            <Card className="p-8 rounded-[2.5rem] border-2 border-blue-100 shadow-xl shadow-blue-50/50 bg-white relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full -mr-16 -mt-16" />
+              <div className="relative">
+                <h4 className="text-xl font-black text-slate-900 mb-4 flex items-center gap-2">
+                  <Plus className="w-5 h-5 text-blue-600" />
+                  Portfolio Score
+                </h4>
+                <div className="text-6xl font-black text-blue-600 mb-6 drop-shadow-sm">
+                  {Math.min(portfolioScore, 1000)}<span className="text-blue-200 text-2xl ml-1">/1000</span>
+                </div>
+                <p className="text-slate-500 font-bold mb-8">
+                  Your portfolio is in the <span className="text-blue-600">Top {Math.max(100 - (user?.portfolioCount || 0) * 5, 1)}%</span> of applicants.
+                </p>
+                <div className="h-3 bg-slate-100 rounded-full overflow-hidden mb-8">
+                  <div 
+                    className="h-full bg-blue-600 rounded-full transition-all duration-1000" 
+                    style={{ width: `${scorePercent}%` }} 
+                  />
+                </div>
+                <Button className="w-full bg-blue-600 text-white hover:bg-blue-700 py-5 rounded-2xl font-black shadow-xl shadow-blue-200 transition-all border-none text-lg">
+                  Increase Your Score
+                </Button>
               </div>
-              <Button className="w-full bg-white text-indigo-600 hover:bg-indigo-50 py-4 rounded-xl font-black">
-                Review Full Analysis
-              </Button>
             </Card>
           </div>
         </div>
