@@ -6,6 +6,7 @@ import { Card } from '../components/ui/Card';
 import { Modal } from '../components/ui/Modal';
 import { Toast } from '../components/ui/Toast';
 import { Clock, Zap, ChevronRight, ChevronLeft, CheckCircle2 } from 'lucide-react';
+import { FileUpload } from '../components/ui/FileUpload';
 
 const assessmentContent = [
   // ... existing content (keeping it simple for the chunk replace)
@@ -130,15 +131,19 @@ export const AssessmentPage = () => {
             </p>
           </div>
 
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <label className="text-sm font-black text-slate-900 uppercase tracking-widest">Your Detailed Response</label>
-              <span className="text-xs font-bold text-slate-400 italic">Be as detailed as possible to showcase your industry readiness.</span>
+          <div className="space-y-12">
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-black text-slate-900 uppercase tracking-widest">Your Detailed Response</label>
+                <span className="text-xs font-bold text-slate-400 italic">Be as detailed as possible to showcase your industry readiness.</span>
+              </div>
+              <textarea 
+                placeholder="Type your answer here..."
+                className="w-full min-h-[400px] p-10 rounded-[2rem] bg-slate-50 border-2 border-slate-100 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none text-lg font-medium text-slate-700 leading-relaxed placeholder:text-slate-300"
+              />
             </div>
-            <textarea 
-              placeholder="Type your answer here..."
-              className="w-full min-h-[400px] p-10 rounded-[2rem] bg-slate-50 border-2 border-slate-100 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none text-lg font-medium text-slate-700 leading-relaxed placeholder:text-slate-300"
-            />
+
+            <FileUpload onFilesSelected={(files: File[]) => console.log('Selected files:', files)} />
           </div>
 
           <div className="mt-12 flex justify-end gap-4">

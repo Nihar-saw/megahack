@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   Circle
 } from 'lucide-react';
+import type { ReactElement, JSXElementConstructor, ReactNode, ReactPortal, Key } from 'react';
 
 const roles = [
   {
@@ -68,19 +69,29 @@ const roles = [
 
 const roadmap = [
   {
-    title: 'Frontend Fundamentals',
-    description: 'Master HTML5, CSS3, and modern JavaScript (ES6+).',
-    status: 'completed'
+    status: 'completed',
+    title: 'Learn HTML, CSS & JavaScript',
+    description: 'Build a strong foundation in web development basics.'
   },
   {
-    title: 'React Framework & State Management',
-    description: 'Deep dive into React Hooks, Context API, and Tailwind CSS.',
-    status: 'in-progress'
+    status: 'completed',
+    title: 'Master React',
+    description: 'Develop advanced user interfaces using React and its ecosystem.'
   },
   {
-    title: 'Backend Integration',
-    description: 'Learn RESTful APIs, GraphQL, and basic Node.js setup.',
-    status: 'locked'
+    status: 'in-progress',
+    title: 'Backend with Node.js & Express',
+    description: 'Create RESTful APIs and manage server-side logic.'
+  },
+  {
+    status: 'locked',
+    title: 'Database & PostgreSQL',
+    description: 'Learn to design and interact with relational databases.'
+  },
+  {
+    status: 'locked',
+    title: 'DevOps & Deployment',
+    description: 'Understand CI/CD pipelines and deploy applications to the cloud.'
   }
 ];
 
@@ -123,7 +134,7 @@ export const CareerPage = () => {
           <div className="space-y-10 relative">
             <div className="absolute left-6 top-6 bottom-6 w-1 bg-slate-100 -z-0" />
             
-            {roadmap.map((step, index) => (
+            {roadmap.map((step: { status: string; title: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; description: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; }, index: Key | null | undefined) => (
               <div key={index} className="flex gap-8 relative z-10">
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-lg ${
                   step.status === 'completed' ? 'bg-emerald-500 text-white' :
