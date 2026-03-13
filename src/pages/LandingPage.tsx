@@ -16,7 +16,6 @@ export const LandingPage = () => {
         </h1>
         <div className="hidden md:flex items-center gap-10">
           <a href="#features" className="text-slate-600 font-semibold hover:text-indigo-600 transition-colors">Features</a>
-          <a href="#benefits" className="text-slate-600 font-semibold hover:text-indigo-600 transition-colors">Benefits</a>
           <div className="h-6 w-px bg-slate-200 mx-2"></div>
           <Link to="/login">
             <Button variant="ghost" className="font-semibold text-slate-600">Sign In</Button>
