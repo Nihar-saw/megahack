@@ -143,8 +143,8 @@ export const GapAnalysisPage = () => {
 
             <Card className="p-8 rounded-[2.5rem] border-slate-100 shadow-xl bg-indigo-600 text-white">
               <Zap className="w-10 h-10 text-amber-400 mb-6" />
-              <h4 className="text-xl font-black mb-3">AI Recommendation</h4>
-              <p className="text-indigo-100 font-medium text-sm leading-relaxed mb-8">
+              <h4 className="text-xl font-bold mb-3">AI Recommendation</h4>
+              <p className="text-black font-medium text-sm leading-relaxed mb-8">
                 Focus on <strong>TypeScript</strong> this week. Your React score is high enough to leverage advanced TS patterns immediately.
               </p>
               <Button className="w-full bg-white text-indigo-600 hover:bg-indigo-50 py-4 rounded-xl font-black flex items-center justify-center gap-2">

@@ -43,6 +43,7 @@ const userResponse = (user) => ({
   assessmentRemarks: user.assessmentRemarks,
   interviewScores: user.interviewScores,
   portfolioCount: user.portfolioCount || 0,
+  certificates: user.certificates || [],
   createdAt: user.createdAt,
 });
 
@@ -179,6 +180,44 @@ router.put('/profile', verifyToken, async (req, res) => {
     const user = await User.findByIdAndUpdate(req.userId, update, { new: true, runValidators: true });
     res.status(200).json({ success: true, user: userResponse(user) });
   } catch (err) {
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+// ─── POST /api/auth/issue-certificate  (protected) ────────────────
+router.post('/issue-certificate', verifyToken, async (req, res) => {
+  try {
+    const { courseId, score, level } = req.body;
+    
+    if (!courseId) {
+      return res.status(400).json({ success: false, message: 'Course ID is required' });
+    }
+
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Check if duplicate
+    const existing = user.certificates.find(c => c.courseId === courseId);
+    if (existing) {
+      return res.status(200).json({ success: true, message: 'Certificate already issued', user: userResponse(user) });
+    }
+
+    const certificateId = `CERT-${courseId.toUpperCase()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+    
+    user.certificates.push({
+      courseId,
+      issueDate: new Date(),
+      certificateId,
+      score,
+      level
+    });
+
+    await user.save();
+    res.status(201).json({ success: true, user: userResponse(user), certificateId });
+  } catch (err) {
+    console.error('Issue certificate error:', err);
     res.status(500).json({ success: false, message: 'Server error' });
   }
 });

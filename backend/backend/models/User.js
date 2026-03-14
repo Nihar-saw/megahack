@@ -80,6 +80,13 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  certificates: [{
+    courseId: String,
+    issueDate: { type: Date, default: Date.now },
+    certificateId: { type: String, unique: true },
+    score: Number,
+    level: String
+  }],
   createdAt: {
     type: Date,
     default: Date.now,
